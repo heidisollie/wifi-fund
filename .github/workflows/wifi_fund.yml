@@ -1,0 +1,62 @@
+name: wifi-fund
+
+on:
+  workflow_dispatch:
+    inputs:
+      sdk:
+        description: 'NCS SDK branch'     
+        required: true
+        default: 'v3.0.0-preview1'
+  
+jobs:
+  sdk_version_print:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Adding markdown
+      run: |
+        echo 'nRF Connect SDK version:' >> $GITHUB_STEP_SUMMARY
+        echo ${{ inputs.sdk }} >> $GITHUB_STEP_SUMMARY
+ 
+  build_dk:
+    strategy:
+      max-parallel: 20
+      matrix:
+          board: [nrf7002dk/nrf5340/cpuapp/ns]
+          project: [l2/l2_e2_sol, l3/l3_e1_sol, l4/l4_e1_sol, l4/l4_e2_sol, l5/l5_e1_sol,l5/l5_e2_sol, l6/l6_e1_sol, l6/l6_e2_sol, l7/l7_e1_sol, l8/l8_sol]
+          exclude:
+            - project: l3/l3_e2_sol/
+          include:
+            - board: nrf7002dk/nrf5340/cpuapp
+              project: l3/l3_e2_sol/
+      
+    runs-on: ubuntu-latest
+    continue-on-error: true 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Pull image
+        run: docker pull ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}
+      - name: Build sample
+        run: docker run  --rm -v ${PWD}:/workdir/project -w /workdir/project/v2.9.0-v2.7.0 ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}  west build ${{ matrix.project }} -b ${{ matrix.board }} --build-dir ${{ matrix.project }}/build
+
+  build_ek:
+    strategy:
+      max-parallel: 20
+      matrix:
+          board: [nrf5340dk/nrf5340/cpuapp/ns]
+          project: [l2/l2_e2_sol, l3/l3_e1_sol, l4/l4_e1_sol, l4/l4_e2_sol, l5/l5_e1_sol,l5/l5_e2_sol, l6/l6_e1_sol, l6/l6_e2_sol, l7/l7_e1_sol, l8/l8_sol]
+          exclude:
+            - project: l3/l3_e2_sol/
+          include:
+            - board: nrf5340dk/nrf5340/cpuapp
+              project: l3/l3_e2_sol/
+      
+    runs-on: ubuntu-latest
+    continue-on-error: true 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Pull image
+        run: docker pull ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}
+      - name: Build sample
+        run: docker run  --rm -v ${PWD}:/workdir/project -w /workdir/project/v2.9.0-v2.7.0 ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}  west build ${{ matrix.project }} -b ${{ matrix.board }} --build-dir ${{ matrix.project }}/build -- -DSHIELD=nrf7002ek       
