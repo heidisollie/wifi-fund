@@ -22,7 +22,7 @@ jobs:
       max-parallel: 20
       matrix:
           board: [nrf7002dk/nrf5340/cpuapp/ns]
-          project: [l2/l2_e2_sol, l3/l3_e1_sol, l4/l4_e1_sol, l4/l4_e2_sol, l5/l5_e1_sol,l5/l5_e2_sol, l6/l6_e1_sol, l6/l6_e2_sol, l7/l7_e1_sol, l8/l8_sol]
+          project: [l2/l2_e2_sol, l2/l2_e3_sol, l3/l3_e1_sol, l3/l3_e2_sol, l4/l4_e1_sol, l4/l4_e2_sol, l5/l5_e1_sol, l5/l5_e2_sol, l5/l5_e3_sol, l6/l6_e1_sol, l6/l6_e2_sol]
           exclude:
             - project: l3/l3_e2_sol/
           include:
@@ -37,14 +37,14 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}
       - name: Build sample
-        run: docker run  --rm -v ${PWD}:/workdir/project -w /workdir/project/v2.9.0-v2.7.0 ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}  west build ${{ matrix.project }} -b ${{ matrix.board }} --build-dir ${{ matrix.project }}/build
+        run: docker run  --rm -v ${PWD}:/workdir/project -w /workdir/project/v2.9.0-v2.8.0 ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}  west build ${{ matrix.project }} -b ${{ matrix.board }} --build-dir ${{ matrix.project }}/build
 
   build_ek:
     strategy:
       max-parallel: 20
       matrix:
           board: [nrf5340dk/nrf5340/cpuapp/ns]
-          project: [l2/l2_e2_sol, l3/l3_e1_sol, l4/l4_e1_sol, l4/l4_e2_sol, l5/l5_e1_sol,l5/l5_e2_sol, l6/l6_e1_sol, l6/l6_e2_sol, l7/l7_e1_sol, l8/l8_sol]
+          project: [l2/l2_e2_sol, l2/l2_e3_sol, l3/l3_e1_sol, l3/l3_e2_sol, l4/l4_e1_sol, l4/l4_e2_sol, l5/l5_e1_sol, l5/l5_e2_sol, l5/l5_e3_sol, l6/l6_e1_sol, l6/l6_e2_sol]
           exclude:
             - project: l3/l3_e2_sol/
           include:
@@ -59,4 +59,4 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}
       - name: Build sample
-        run: docker run  --rm -v ${PWD}:/workdir/project -w /workdir/project/v2.9.0-v2.7.0 ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}  west build ${{ matrix.project }} -b ${{ matrix.board }} --build-dir ${{ matrix.project }}/build -- -DSHIELD=nrf7002ek       
+        run: docker run  --rm -v ${PWD}:/workdir/project -w /workdir/project/v2.9.0-v2.8.0 ghcr.io/lukaszbielaknordicsemi/nordicplayground/nrfconnect-sdk:${{ inputs.sdk }}  west build ${{ matrix.project }} -b ${{ matrix.board }} --build-dir ${{ matrix.project }}/build -- -DSHIELD=nrf7002ek       
